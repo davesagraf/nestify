@@ -20,7 +20,9 @@ let AppModule = class AppModule {
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({ isGlobal: true }),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+            }),
             typeorm_1.TypeOrmModule.forRoot(data_source_1.dataSourceOptions),
             user_module_1.UserModule,
             auth_module_1.AuthModule,
