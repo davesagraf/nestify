@@ -13,20 +13,20 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async ifUserExists(createUserDto: CreateUserDto): Promise<any> {
+    const userExists = await this.userRepository.findOneBy({
+      email: createUserDto.email,
+    });
+    if (userExists) return true;
+    else return false;
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const user = new User();
-
     const saltRounds = 10;
-    const password = createUserDto.password;
-    const hash = await bcrypt.hash(password, saltRounds);
-    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(createUserDto.password, saltRounds);
+    createUserDto.password = hash;
 
-    user.firstName = createUserDto.firstName;
-    user.lastName = createUserDto.lastName;
-    user.email = createUserDto.email;
-    user.password = hash;
-
-    return this.userRepository.save(user);
+    return this.userRepository.save(createUserDto);
   }
 
   updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
