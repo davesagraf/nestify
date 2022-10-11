@@ -6,3 +6,4 @@ build/
 tmp/
 temp/
 src/common/envs/
+dist/
