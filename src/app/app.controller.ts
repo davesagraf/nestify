@@ -47,6 +47,9 @@ export class AppController {
     await this.userService.createUser(createUserDto);
     return res.status(HttpStatus.OK).json({
       message: 'User has been created successfully',
+      email: createUserDto.email,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
     });
   }
 
