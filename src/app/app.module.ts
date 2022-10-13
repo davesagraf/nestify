@@ -6,6 +6,7 @@ import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { LectureModule } from 'src/lecture/lecture.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UserModule,
+    LectureModule,
     AuthModule,
   ],
   controllers: [AppController],

@@ -33,6 +33,7 @@ export class UserService {
     return this.userRepository.update(id, {
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
+      role: updateUserDto.role,
     });
   }
 

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class Lecture {
@@ -11,6 +12,11 @@ export class Lecture {
   @Column()
   content: string;
 
-  @Column()
-  data: JSON;
+  @Column({
+    type: 'jsonb',
+  })
+  data: [];
+
+  @ManyToOne(() => User, (user) => user.lectures)
+  user: User;
 }
