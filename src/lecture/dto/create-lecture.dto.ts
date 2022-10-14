@@ -1,4 +1,9 @@
-import { IsNotEmpty, IsString, IsArray, IsObject } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsObject,
+  ValidateNested,
+} from 'class-validator';
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
 
 export class CreateLectureDto {
@@ -8,8 +13,12 @@ export class CreateLectureDto {
   @IsString()
   content: string;
 
-  @IsArray()
-  data: [];
+  @ValidateNested()
+  data: {
+    image: string;
+    theme: string;
+    links: string[];
+  };
 
   @IsObject()
   user: CreateUserDto;

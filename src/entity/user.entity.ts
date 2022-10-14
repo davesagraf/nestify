@@ -1,14 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Lecture } from './lecture.entity';
-
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  REGULAR = 'REGULAR',
-}
+import { IUser, UserRole } from '../entity/interface/userEntity.interface';
 
 @Entity()
-export class User {
+export class User implements IUser {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -15,8 +15,8 @@ import { UpdateLectureDto } from './dto/update-lecture.dto';
 import { Lecture } from 'src/entity/lecture.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
-import { UserRole } from 'src/entity/user.entity';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { UserRole } from 'src/entity/interface/userEntity.interface';
 
 @Roles(UserRole.ADMIN)
 @UseGuards(JwtAuthGuard, RolesGuard)
