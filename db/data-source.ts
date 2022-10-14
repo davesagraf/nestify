@@ -8,7 +8,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: 'dave',
   password: 'mazomedik',
   database: 'nestify_db',
-  synchronize: false,
+  synchronize: true,
   logging: false,
   entities: ['dist/src/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
