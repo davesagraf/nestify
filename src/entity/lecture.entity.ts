@@ -1,12 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
-import { ILecture } from './interface/lectureEntity.interface';
+import { ILectureData } from './interface/lectureEntity.interface';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class Lecture implements ILecture {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Lecture extends BaseEntity {
   @Column()
   title: string;
 
@@ -16,11 +14,7 @@ export class Lecture implements ILecture {
   @Column({
     type: 'jsonb',
   })
-  data: {
-    image: string;
-    theme: string;
-    links: string[];
-  };
+  data: ILectureData;
 
   @ManyToOne(() => User, (user) => user.lectures)
   user: User;

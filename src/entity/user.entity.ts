@@ -1,13 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, Unique } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Lecture } from './lecture.entity';
-import { IUser, UserRole } from '../entity/interface/userEntity.interface';
+import { UserRole } from '../entity/interface/userEntity.interface';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-export class User implements IUser {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+@Unique(['email'])
+export class User extends BaseEntity {
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -31,10 +30,13 @@ export class User implements IUser {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToMany(() => Lecture, (lecture) => lecture.user)
+  @OneToMany(() => Lecture, (lecture) => lecture.user, {
+    cascade: ['remove'],
+  })
   lectures: Lecture[];
 
   constructor(partial: Partial<User>) {
+    super();
     Object.assign(this, partial);
   }
 }

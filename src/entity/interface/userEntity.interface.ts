@@ -1,12 +1,12 @@
 import { Lecture } from '../lecture.entity';
+import { IBaseEntity } from './baseEntity.interface';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
   REGULAR = 'REGULAR',
 }
 
-export interface IUser {
-  id: number;
+export interface IUser extends IBaseEntity {
   role: UserRole;
   email: string;
   password: string;

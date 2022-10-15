@@ -4,9 +4,11 @@ import {
   IsObject,
   ValidateNested,
 } from 'class-validator';
+import { ILectureData } from 'src/entity/interface/lectureEntity.interface';
+import { Lecture } from 'src/entity/lecture.entity';
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
 
-export class CreateLectureDto {
+export class CreateLectureDto extends Lecture {
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -14,11 +16,7 @@ export class CreateLectureDto {
   content: string;
 
   @ValidateNested()
-  data: {
-    image: string;
-    theme: string;
-    links: string[];
-  };
+  data: ILectureData;
 
   @IsObject()
   user: CreateUserDto;
