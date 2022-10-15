@@ -10,7 +10,7 @@ export const users: IUser[] = [
     lastName: 'Dumbass',
     isActive: true,
     lectures: [],
-    createdAt: `${Date}`,
-    updatedAt: `${Date}`,
+    createdAt: '2022-10-15T16:50:53.553472514Z',
+    updatedAt: '2022-10-18T16:55:53.553472514Z',
   },
 ];
