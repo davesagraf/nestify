@@ -4,9 +4,9 @@ import { Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from '../user/dto/createUser.dto';
 import { User } from 'src/entity/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import * as bcrypt from 'bcrypt';
 import { IUser } from 'src/entity/interface/userEntity.interface';
 import { users } from 'db/seeders/usersData';
+import { hashPassword } from 'src/utils/bcrypt';
 
 @Injectable()
 export class UserService {
@@ -24,11 +24,11 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(createUserDto.password, saltRounds);
-    createUserDto.password = hash;
-
-    return this.userRepository.save(createUserDto);
+    const password = hashPassword(createUserDto.password);
+    console.log(password);
+    const newUser = { ...createUserDto, password };
+    console.log(newUser);
+    return this.userRepository.save(newUser);
   }
 
   updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
@@ -64,7 +64,11 @@ export class UserService {
           if (dbUser) {
             return Promise.resolve(null);
           }
-          return Promise.resolve(await this.userRepository.save(user));
+          const password = hashPassword(user.password);
+          console.log(password);
+          const newUser = { ...user, password };
+          console.log(newUser);
+          return Promise.resolve(await this.userRepository.save(newUser));
         })
         .catch((error) => Promise.reject(error));
     });

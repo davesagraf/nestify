@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
-export class Seeder {
+export class SeederService {
   constructor(
     private readonly logger: Logger,
     private readonly userService: UserService,

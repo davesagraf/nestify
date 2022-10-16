@@ -1,11 +1,10 @@
-import { Entity, Column, OneToMany, Unique } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Lecture } from './lecture.entity';
 import { UserRole } from '../entity/interface/userEntity.interface';
-import { BaseEntity } from './base.entity';
+import { BaseEntity } from './baseEntity';
 
 @Entity()
-@Unique(['email'])
 export class User extends BaseEntity {
   @Column({
     type: 'enum',
@@ -14,7 +13,7 @@ export class User extends BaseEntity {
   })
   role: UserRole;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Exclude()

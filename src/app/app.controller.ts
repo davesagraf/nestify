@@ -8,6 +8,8 @@ import {
   UseGuards,
   HttpStatus,
   HttpException,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
@@ -30,9 +32,10 @@ export class AppController {
   }
 
   @Post('auth/signup')
+  @UsePipes(ValidationPipe)
   async createUser(
-    @Res() res,
     @Body() createUserDto: CreateUserDto,
+    @Res() res,
   ): Promise<User> {
     if (await this.userService.ifUserExists(createUserDto)) {
       throw new HttpException(

@@ -7,11 +7,11 @@ export class CreateUserDto extends User {
   @IsString()
   lastName: string;
 
-  @IsEmail()
-  @IsString()
+  // @IsEmail()
+  // @IsString()
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
+  // @IsNotEmpty()
+  // @IsString()
   password: string;
 }
