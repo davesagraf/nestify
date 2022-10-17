@@ -29,6 +29,8 @@ export class User extends BaseEntity {
   @Column({ default: true })
   isActive: boolean;
 
+  @Exclude()
+  @Column({ type: 'jsonb', nullable: true })
   @OneToMany(() => Lecture, (lecture) => lecture.user, {
     cascade: ['remove'],
   })
