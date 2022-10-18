@@ -34,9 +34,7 @@ export class LectureController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/apply')
-  applyLecture(
-    @Body() applyData: IApplyData,
-  ) {
+  applyLecture(@Body() applyData: IApplyData) {
     return this.lectureService.applyLecture(applyData);
   }
 
@@ -47,9 +45,7 @@ export class LectureController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:lectureId/users')
-  getAllLectureUsers(
-    @Param('lectureId') lectureId: string,
-  ): Promise<any[]> {
+  getAllLectureUsers(@Param('lectureId') lectureId: string): Promise<any[]> {
     return this.lectureService.getAllLectureUsers(+lectureId);
   }
 

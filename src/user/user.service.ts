@@ -25,9 +25,9 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const password = hashPassword(createUserDto.password);
-    
+
     const newUser = { ...createUserDto, password };
-    
+
     return this.userRepository.save(newUser);
   }
 
@@ -46,18 +46,18 @@ export class UserService {
   async getManyUsersById(userIds: number[]): Promise<User[]> {
     return this.userRepository.find({
       where: { id: In(userIds) },
-    })
+    });
   }
 
   async getAllUserLectures(userId: number): Promise<any[]> {
-    const allUserLectures = await this.userRepository.findOne({where: { id: userId},
-      relations: ['lectures']
+    const allUserLectures = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['lectures'],
     });
     const lectures = allUserLectures.lectures;
-    const lecturesToReturn = lectures.map(({users, ...rest}) => rest);
+    const lecturesToReturn = lectures.map(({ users, ...rest }) => rest);
     return lecturesToReturn;
   }
-
 
   getUserById(id: number): Promise<User> {
     return this.userRepository.findOne({
@@ -82,9 +82,9 @@ export class UserService {
             return Promise.resolve(null);
           }
           const password = hashPassword(user.password);
-          
+
           const newUser = { ...user, password };
-          
+
           return Promise.resolve(await this.userRepository.save(newUser));
         })
         .catch((error) => Promise.reject(error));

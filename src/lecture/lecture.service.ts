@@ -19,9 +19,11 @@ export class LectureService {
   }
 
   async applyLecture({ lectureId, userIds }) {
-    const lectureToApply =  await this.lectureRepository.findOneBy({id: lectureId});
+    const lectureToApply = await this.lectureRepository.findOneBy({
+      id: lectureId,
+    });
     const usersToApply = await this.userService.getManyUsersById(userIds);
-    const usersToReturn = usersToApply.map(({password, ...rest}) => rest)
+    const usersToReturn = usersToApply.map(({ password, ...rest }) => rest);
     lectureToApply.users = usersToApply;
     await this.lectureRepository.save(lectureToApply);
     return usersToReturn;
@@ -32,11 +34,12 @@ export class LectureService {
   }
 
   async getAllLectureUsers(lectureId: number): Promise<any[]> {
-    const allLectureUsers = await this.lectureRepository.findOne({where: { id: lectureId},
-      relations: ['users']
+    const allLectureUsers = await this.lectureRepository.findOne({
+      where: { id: lectureId },
+      relations: ['users'],
     });
     const users = allLectureUsers.users;
-    const usersToReturn = users.map(({password, ...rest}) => rest);
+    const usersToReturn = users.map(({ password, ...rest }) => rest);
     return usersToReturn;
   }
 
