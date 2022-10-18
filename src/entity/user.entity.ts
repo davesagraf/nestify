@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Lecture } from './lecture.entity';
 import { UserRole } from '../entity/interface/userEntity.interface';
@@ -29,11 +29,10 @@ export class User extends BaseEntity {
   @Column({ default: true })
   isActive: boolean;
 
-  @Exclude()
-  @Column({ type: 'jsonb', nullable: true })
-  @OneToMany(() => Lecture, (lecture) => lecture.user, {
-    cascade: ['remove'],
+  @JoinTable({
+    name: 'user_lectures',
   })
+  @ManyToMany(() => Lecture, (lecture) => lecture.users)
   lectures: Lecture[];
 
   constructor(partial: Partial<User>) {

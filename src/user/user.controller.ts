@@ -4,11 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  Request,
   Put,
   ClassSerializerInterceptor,
   UseInterceptors,
   UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -18,12 +20,13 @@ import { User } from '../entity/user.entity';
 import { UserService } from '../user/user.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
-@Roles(UserRole.ADMIN)
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   getAllUsers(): Promise<User[]> {
@@ -32,16 +35,47 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:userId')
-  getUserById(@Param('userId', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.getUserById(id);
+  getUserById(@Param('userId') id: string, @Request() req): Promise<User> {
+    if (req.user.id === +id) {
+      return this.userService.getUserById(+id);
+    }
+    throw new HttpException(
+      {
+        status: HttpStatus.UNAUTHORIZED,
+        error: `Sorry, you can see only your own data.`,
+      },
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 
-  @Delete(':userId')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/:userId/lectures')
+  getAllUserLectures(
+    @Param('userId') userId: string,
+    @Request() req,
+  ): Promise<User[]> {
+    if (req.user.id === +userId) {
+      return this.userService.getAllUserLectures(+userId);
+    }
+    throw new HttpException(
+      {
+        status: HttpStatus.UNAUTHORIZED,
+        error: `Sorry, you can see only your own data.`,
+      },
+      HttpStatus.UNAUTHORIZED,
+    );
+  }
+
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  @Delete('/:userId')
   deleteUser(@Param('userId') id: string): Promise<void> {
     return this.userService.deleteUser(id);
   }
 
-  @Put(':userId')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  @Put('/:userId')
   update(@Param('userId') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.updateUser(+id, updateUserDto);
   }

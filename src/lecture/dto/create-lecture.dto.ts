@@ -19,5 +19,5 @@ export class CreateLectureDto extends Lecture {
   data: ILectureData;
 
   @IsObject()
-  user: CreateUserDto;
+  users: CreateUserDto[];
 }

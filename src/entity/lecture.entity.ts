@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToMany } from 'typeorm';
 import { User } from './user.entity';
 import { ILectureData } from './interface/lectureEntity.interface';
 import { BaseEntity } from './baseEntity';
@@ -16,6 +16,6 @@ export class Lecture extends BaseEntity {
   })
   data: ILectureData;
 
-  @ManyToOne(() => User, (user) => user.lectures)
-  user: User;
+  @ManyToMany(() => User, (user) => user.lectures)
+  users: User[];
 }

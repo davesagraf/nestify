@@ -10,10 +10,8 @@ import {
   HttpException,
   ValidationPipe,
   UsePipes,
-  Param,
   UseInterceptors,
   ClassSerializerInterceptor,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { AuthService } from 'src/auth/auth.service';

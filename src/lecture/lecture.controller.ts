@@ -8,6 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { LectureService } from './lecture.service';
 import { CreateLectureDto } from './dto/create-lecture.dto';
@@ -24,22 +26,33 @@ import { UserRole } from 'src/entity/interface/userEntity.interface';
 export class LectureController {
   constructor(private lectureService: LectureService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   createLecture(@Body() createLectureDto: CreateLectureDto) {
     return this.lectureService.createLecture(createLectureDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   getAllLectures(): Promise<Lecture[]> {
     return this.lectureService.getAllLectures();
   }
 
-  @Get(':lectureId')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/:lectureId/users')
+  getAllLectureUsers(
+    @Param('lectureId') lectureId: string,
+  ): Promise<Lecture[]> {
+    return this.lectureService.getAllLectureUsers(+lectureId);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/:lectureId')
   getLecture(@Param('lectureId', ParseIntPipe) id: string) {
     return this.lectureService.getLecture(+id);
   }
 
-  @Put(':lectureId')
+  @Put('/:lectureId')
   update(
     @Param('lectureId') id: string,
     @Body() updateLectureDto: UpdateLectureDto,
@@ -47,7 +60,7 @@ export class LectureController {
     return this.lectureService.updateLecture(+id, updateLectureDto);
   }
 
-  @Delete(':lectureId')
+  @Delete('/:lectureId')
   remove(@Param('lectureId') id: string) {
     return this.lectureService.deleteLecture(+id);
   }

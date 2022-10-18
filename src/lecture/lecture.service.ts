@@ -20,6 +20,13 @@ export class LectureService {
     return this.lectureRepository.find();
   }
 
+  getAllLectureUsers(lectureId: number): Promise<Lecture[]> {
+    return this.lectureRepository.find({
+      relations: ['users'],
+      where: { users: { lectures: { id: lectureId } } },
+    });
+  }
+
   getLecture(id: number): Promise<Lecture> {
     return this.lectureRepository.findOneBy({ id: id });
   }
@@ -32,7 +39,7 @@ export class LectureService {
       title: updateLectureDto.title,
       content: updateLectureDto.content,
       data: updateLectureDto.data,
-      user: updateLectureDto.user,
+      users: updateLectureDto.users,
     });
   }
 
