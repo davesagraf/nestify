@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from 'src/entity/lecture.entity';
+import { UserService } from 'src/user/user.service';
 import { Repository, UpdateResult } from 'typeorm';
 import { CreateLectureDto } from './dto/create-lecture.dto';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
@@ -10,21 +11,33 @@ export class LectureService {
   constructor(
     @InjectRepository(Lecture)
     private readonly lectureRepository: Repository<Lecture>,
+    private readonly userService: UserService,
   ) {}
 
   createLecture(createLectureDto: CreateLectureDto) {
     return this.lectureRepository.save(createLectureDto);
   }
 
+  async applyLecture({ lectureId, userIds }) {
+    const lectureToApply =  await this.lectureRepository.findOneBy({id: lectureId});
+    const usersToApply = await this.userService.getManyUsersById(userIds);
+    const usersToReturn = usersToApply.map(({password, ...rest}) => rest)
+    lectureToApply.users = usersToApply;
+    await this.lectureRepository.save(lectureToApply);
+    return usersToReturn;
+  }
+
   getAllLectures(): Promise<Lecture[]> {
     return this.lectureRepository.find();
   }
 
-  getAllLectureUsers(lectureId: number): Promise<Lecture[]> {
-    return this.lectureRepository.find({
-      relations: ['users'],
-      where: { users: { lectures: { id: lectureId } } },
+  async getAllLectureUsers(lectureId: number): Promise<any[]> {
+    const allLectureUsers = await this.lectureRepository.findOne({where: { id: lectureId},
+      relations: ['users']
     });
+    const users = allLectureUsers.users;
+    const usersToReturn = users.map(({password, ...rest}) => rest);
+    return usersToReturn;
   }
 
   getLecture(id: number): Promise<Lecture> {

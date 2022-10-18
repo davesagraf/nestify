@@ -39,6 +39,9 @@ export class UserController {
     if (req.user.id === +id) {
       return this.userService.getUserById(+id);
     }
+    if (req.user.id !== +id && req.user.role === 'ADMIN') {
+      return this.userService.getUserById(+id);
+    }
     throw new HttpException(
       {
         status: HttpStatus.UNAUTHORIZED,
@@ -53,8 +56,11 @@ export class UserController {
   getAllUserLectures(
     @Param('userId') userId: string,
     @Request() req,
-  ): Promise<User[]> {
+  ): Promise<any[]> {
     if (req.user.id === +userId) {
+      return this.userService.getAllUserLectures(+userId);
+    }
+    if (req.user.id !== +userId && req.user.role === 'ADMIN') {
       return this.userService.getAllUserLectures(+userId);
     }
     throw new HttpException(

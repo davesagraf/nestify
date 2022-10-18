@@ -7,6 +7,11 @@ export interface ILectureData {
   links: string[];
 }
 
+export interface IApplyData {
+  lectureId: number;
+  userIds: number[];
+}
+
 export interface ILecture extends IBaseEntity {
   title: string;
   content: string;

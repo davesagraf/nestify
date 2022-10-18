@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { In, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from '../user/dto/createUser.dto';
 import { User } from 'src/entity/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
@@ -25,9 +25,9 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const password = hashPassword(createUserDto.password);
-    console.log(password);
+    
     const newUser = { ...createUserDto, password };
-    console.log(newUser);
+    
     return this.userRepository.save(newUser);
   }
 
@@ -43,12 +43,21 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  getAllUserLectures(userId: number): Promise<User[]> {
+  async getManyUsersById(userIds: number[]): Promise<User[]> {
     return this.userRepository.find({
-      relations: ['lectures'],
-      where: { lectures: { users: { id: userId } } },
-    });
+      where: { id: In(userIds) },
+    })
   }
+
+  async getAllUserLectures(userId: number): Promise<any[]> {
+    const allUserLectures = await this.userRepository.findOne({where: { id: userId},
+      relations: ['lectures']
+    });
+    const lectures = allUserLectures.lectures;
+    const lecturesToReturn = lectures.map(({users, ...rest}) => rest);
+    return lecturesToReturn;
+  }
+
 
   getUserById(id: number): Promise<User> {
     return this.userRepository.findOne({
@@ -64,7 +73,6 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
-  //seed users
   seedUsers(): Array<Promise<User>> {
     return users.map(async (user: IUser) => {
       return await this.userRepository
@@ -74,9 +82,9 @@ export class UserService {
             return Promise.resolve(null);
           }
           const password = hashPassword(user.password);
-          console.log(password);
+          
           const newUser = { ...user, password };
-          console.log(newUser);
+          
           return Promise.resolve(await this.userRepository.save(newUser));
         })
         .catch((error) => Promise.reject(error));

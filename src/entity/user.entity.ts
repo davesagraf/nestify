@@ -32,7 +32,7 @@ export class User extends BaseEntity {
   @JoinTable({
     name: 'user_lectures',
   })
-  @ManyToMany(() => Lecture, (lecture) => lecture.users)
+  @ManyToMany(() => Lecture, (lecture) => lecture.users, { cascade: true })
   lectures: Lecture[];
 
   constructor(partial: Partial<User>) {

@@ -19,6 +19,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { UserRole } from 'src/entity/interface/userEntity.interface';
+import { IApplyData } from 'src/entity/interface/lectureEntity.interface';
 
 @Roles(UserRole.ADMIN)
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -26,13 +27,19 @@ import { UserRole } from 'src/entity/interface/userEntity.interface';
 export class LectureController {
   constructor(private lectureService: LectureService) {}
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   createLecture(@Body() createLectureDto: CreateLectureDto) {
     return this.lectureService.createLecture(createLectureDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/apply')
+  applyLecture(
+    @Body() applyData: IApplyData,
+  ) {
+    return this.lectureService.applyLecture(applyData);
+  }
+
   @Get()
   getAllLectures(): Promise<Lecture[]> {
     return this.lectureService.getAllLectures();
@@ -42,11 +49,10 @@ export class LectureController {
   @Get('/:lectureId/users')
   getAllLectureUsers(
     @Param('lectureId') lectureId: string,
-  ): Promise<Lecture[]> {
+  ): Promise<any[]> {
     return this.lectureService.getAllLectureUsers(+lectureId);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:lectureId')
   getLecture(@Param('lectureId', ParseIntPipe) id: string) {
     return this.lectureService.getLecture(+id);

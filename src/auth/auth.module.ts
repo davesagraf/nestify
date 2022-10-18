@@ -17,7 +17,7 @@ import { RolesGuard } from 'src/guards/roles.guard';
       useFactory: (configService: ConfigService) => {
         return {
           secret: configService.get<string>('API_SECRET'),
-          signOptions: { expiresIn: '60s' },
+          signOptions: { expiresIn: '360s' },
         };
       },
       inject: [ConfigService],

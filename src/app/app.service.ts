@@ -7,7 +7,6 @@ import { SeederModule } from 'db/seeders/seeder.module';
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
   onApplicationBootstrap(): any {
-    //перенёс логику из файла src/seed.ts сюда, а там закомментил
     NestFactory.createApplicationContext(SeederModule)
       .then((appContext) => {
         const logger = appContext.get(Logger);
