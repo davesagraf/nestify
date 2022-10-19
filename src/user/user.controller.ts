@@ -15,6 +15,7 @@ import {
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/entity/interface/userEntity.interface';
+import { Lecture } from 'src/entity/lecture.entity';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { User } from '../entity/user.entity';
 import { UserService } from '../user/user.service';
@@ -29,18 +30,18 @@ export class UserController {
   @UseGuards(RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers();
+  async getAllUsers(): Promise<User[]> {
+    return await this.userService.getAllUsers();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:userId')
-  getUserById(@Param('userId') id: string, @Request() req): Promise<User> {
+  async getUserById(@Param('userId') id: string, @Request() req): Promise<User> {
     if (req.user.id === +id) {
-      return this.userService.getUserById(+id);
+      return await this.userService.getUserById(+id);
     }
     if (req.user.id !== +id && req.user.role === 'ADMIN') {
-      return this.userService.getUserById(+id);
+      return await this.userService.getUserById(+id);
     }
     throw new HttpException(
       {
@@ -53,15 +54,15 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:userId/lectures')
-  getAllUserLectures(
+  async getAllUserLectures(
     @Param('userId') userId: string,
     @Request() req,
-  ): Promise<any[]> {
+  ): Promise<Omit<Lecture[], 'users'>> {
     if (req.user.id === +userId) {
-      return this.userService.getAllUserLectures(+userId);
+      return await this.userService.getAllUserLectures(+userId);
     }
     if (req.user.id !== +userId && req.user.role === 'ADMIN') {
-      return this.userService.getAllUserLectures(+userId);
+      return await this.userService.getAllUserLectures(+userId);
     }
     throw new HttpException(
       {
@@ -75,14 +76,14 @@ export class UserController {
   @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
   @Delete('/:userId')
-  deleteUser(@Param('userId') id: string): Promise<void> {
-    return this.userService.deleteUser(id);
+  async deleteUser(@Param('userId') id: string): Promise<void> {
+    return await this.userService.deleteUser(id);
   }
 
   @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
   @Put('/:userId')
-  update(@Param('userId') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.updateUser(+id, updateUserDto);
+  async update(@Param('userId') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.updateUser(+id, updateUserDto);
   }
 }

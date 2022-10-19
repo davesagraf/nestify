@@ -20,6 +20,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { UserRole } from 'src/entity/interface/userEntity.interface';
 import { IApplyData } from 'src/entity/interface/lectureEntity.interface';
+import { User } from 'src/entity/user.entity';
 
 @Roles(UserRole.ADMIN)
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -28,42 +29,42 @@ export class LectureController {
   constructor(private lectureService: LectureService) {}
 
   @Post()
-  createLecture(@Body() createLectureDto: CreateLectureDto) {
-    return this.lectureService.createLecture(createLectureDto);
+  async createLecture(@Body() createLectureDto: CreateLectureDto) {
+    return await this.lectureService.createLecture(createLectureDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/apply')
-  applyLecture(@Body() applyData: IApplyData) {
-    return this.lectureService.applyLecture(applyData);
+  async applyLecture(@Body() applyData: IApplyData): Promise<Omit<User[], 'password'>> {
+    return await this.lectureService.applyLecture(applyData);
   }
 
   @Get()
-  getAllLectures(): Promise<Lecture[]> {
-    return this.lectureService.getAllLectures();
+  async getAllLectures(): Promise<Lecture[]> {
+    return await this.lectureService.getAllLectures();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:lectureId/users')
-  getAllLectureUsers(@Param('lectureId') lectureId: string): Promise<any[]> {
-    return this.lectureService.getAllLectureUsers(+lectureId);
+  async getAllLectureUsers(@Param('lectureId') lectureId: string): Promise<Omit<User[], 'password'>> {
+    return await this.lectureService.getAllLectureUsers(+lectureId);
   }
 
   @Get('/:lectureId')
-  getLecture(@Param('lectureId', ParseIntPipe) id: string) {
-    return this.lectureService.getLecture(+id);
+  async getLecture(@Param('lectureId', ParseIntPipe) id: string) {
+    return await this.lectureService.getLecture(+id);
   }
 
   @Put('/:lectureId')
-  update(
+  async update(
     @Param('lectureId') id: string,
     @Body() updateLectureDto: UpdateLectureDto,
   ) {
-    return this.lectureService.updateLecture(+id, updateLectureDto);
+    return await this.lectureService.updateLecture(+id, updateLectureDto);
   }
 
   @Delete('/:lectureId')
-  remove(@Param('lectureId') id: string) {
-    return this.lectureService.deleteLecture(+id);
+  async remove(@Param('lectureId') id: string) {
+    return await this.lectureService.deleteLecture(+id);
   }
 }
