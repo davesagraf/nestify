@@ -8,6 +8,10 @@ import {
   UseGuards,
   HttpStatus,
   HttpException,
+  ValidationPipe,
+  UsePipes,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
@@ -30,9 +34,10 @@ export class AppController {
   }
 
   @Post('auth/signup')
+  @UsePipes(ValidationPipe)
   async createUser(
-    @Res() res,
     @Body() createUserDto: CreateUserDto,
+    @Res() res,
   ): Promise<User> {
     if (await this.userService.ifUserExists(createUserDto)) {
       throw new HttpException(
@@ -54,8 +59,9 @@ export class AppController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  getProfile(@Request() req): Promise<User> {
+    return this.userService.getUserById(req.user.id);
   }
 }

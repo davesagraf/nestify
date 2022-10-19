@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { In, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from '../user/dto/createUser.dto';
 import { User } from 'src/entity/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import * as bcrypt from 'bcrypt';
+import { IUser } from 'src/entity/interface/userEntity.interface';
+import { users } from 'db/seeders/usersData';
+import { hashPassword } from 'src/utils/bcrypt';
+import { Lecture } from 'src/entity/lecture.entity';
 
 @Injectable()
 export class UserService {
@@ -22,15 +25,15 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(createUserDto.password, saltRounds);
-    createUserDto.password = hash;
+    const password = hashPassword(createUserDto.password);
 
-    return this.userRepository.save(createUserDto);
+    const newUser = { ...createUserDto, password };
+
+    return await this.userRepository.save(newUser);
   }
 
-  updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
-    return this.userRepository.update(id, {
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+    return await this.userRepository.update(id, {
       firstName: updateUserDto.firstName,
       lastName: updateUserDto.lastName,
       role: updateUserDto.role,
@@ -38,18 +41,53 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return this.userRepository.find();
+    return await this.userRepository.find();
   }
 
-  getUserById(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id: id });
+  async getManyUsersById(userIds: number[]): Promise<User[]> {
+    return await this.userRepository.find({
+      where: { id: In(userIds) },
+    });
+  }
+
+  async getAllUserLectures(userId: number): Promise<Omit<Lecture, 'users'>[]> {
+    const allUserLectures = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['lectures'],
+    });
+    const lectures = allUserLectures.lectures;
+    return lectures;
+  }
+
+  async getUserById(id: number): Promise<User> {
+    return await this.userRepository.findOne({
+      where: { id: id },
+    });
   }
 
   async findUser(username: string): Promise<User | undefined> {
-    return this.userRepository.findOneBy({ email: username });
+    return await this.userRepository.findOneBy({ email: username });
   }
 
   async deleteUser(id: string): Promise<void> {
     await this.userRepository.delete(id);
+  }
+
+  seedUsers(): Array<Promise<User>> {
+    return users.map(async (user: IUser) => {
+      return await this.userRepository
+        .findOneBy({ firstName: user.firstName })
+        .then(async (dbUser) => {
+          if (dbUser) {
+            return Promise.resolve(null);
+          }
+          const password = hashPassword(user.password);
+
+          const newUser = { ...user, password };
+
+          return Promise.resolve(await this.userRepository.save(newUser));
+        })
+        .catch((error) => Promise.reject(error));
+    });
   }
 }

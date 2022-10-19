@@ -1,5 +1,5 @@
-import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import 'reflect-metadata';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',

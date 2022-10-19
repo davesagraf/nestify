@@ -1,17 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Lecture } from './lecture.entity';
-
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  REGULAR = 'REGULAR',
-}
+import { UserRole } from '../entity/interface/userEntity.interface';
+import { BaseEntity } from './baseEntity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -19,7 +13,7 @@ export class User {
   })
   role: UserRole;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Exclude()
@@ -35,10 +29,14 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToMany(() => Lecture, (lecture) => lecture.user)
+  @JoinTable({
+    name: 'user_lectures',
+  })
+  @ManyToMany(() => Lecture, (lecture) => lecture.users, { cascade: true })
   lectures: Lecture[];
 
   constructor(partial: Partial<User>) {
+    super();
     Object.assign(this, partial);
   }
 }
