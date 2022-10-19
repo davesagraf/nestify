@@ -19,7 +19,7 @@ export class LectureService {
     return await this.lectureRepository.save(createLectureDto);
   }
 
-  async applyLecture({ lectureId, userIds }): Promise<Omit<User[], 'password'>> {
+  async applyLecture({ lectureId, userIds }): Promise<Omit<User, 'password'>[]> {
     const lectureToApply = await this.lectureRepository.findOneBy({
       id: lectureId,
     });
@@ -33,7 +33,7 @@ export class LectureService {
     return await this.lectureRepository.find();
   }
 
-  async getAllLectureUsers(lectureId: number): Promise<Omit<User[], 'password'>> {
+  async getAllLectureUsers(lectureId: number): Promise<Omit<User, 'password'>[]> {
     const allLectureUsers = await this.lectureRepository.findOne({
       where: { id: lectureId },
       relations: ['users'],

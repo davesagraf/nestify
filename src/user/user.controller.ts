@@ -57,7 +57,7 @@ export class UserController {
   async getAllUserLectures(
     @Param('userId') userId: string,
     @Request() req,
-  ): Promise<Omit<Lecture[], 'users'>> {
+  ): Promise<Omit<Lecture, 'users'>[]> {
     if (req.user.id === +userId) {
       return await this.userService.getAllUserLectures(+userId);
     }

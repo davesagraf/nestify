@@ -50,7 +50,7 @@ export class UserService {
     });
   }
 
-  async getAllUserLectures(userId: number): Promise<Omit<Lecture[], 'users'>> {
+  async getAllUserLectures(userId: number): Promise<Omit<Lecture, 'users'>[]> {
     const allUserLectures = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['lectures'],

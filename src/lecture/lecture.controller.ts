@@ -35,7 +35,7 @@ export class LectureController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/apply')
-  async applyLecture(@Body() applyData: IApplyData): Promise<Omit<User[], 'password'>> {
+  async applyLecture(@Body() applyData: IApplyData): Promise<Omit<User, 'password'>[]> {
     return await this.lectureService.applyLecture(applyData);
   }
 
@@ -46,7 +46,7 @@ export class LectureController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:lectureId/users')
-  async getAllLectureUsers(@Param('lectureId') lectureId: string): Promise<Omit<User[], 'password'>> {
+  async getAllLectureUsers(@Param('lectureId') lectureId: string): Promise<Omit<User, 'password'>[]> {
     return await this.lectureService.getAllLectureUsers(+lectureId);
   }
 
