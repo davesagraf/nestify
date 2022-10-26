@@ -65,6 +65,13 @@ export class UserService {
     });
   }
 
+  async getUserProfile(userId: number): Promise<any> {
+    return await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['lectures'],
+    });
+  }
+
   async findUser(username: string): Promise<User | undefined> {
     return await this.userRepository.findOneBy({ email: username });
   }
