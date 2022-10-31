@@ -28,9 +28,10 @@ export class AppController {
   ) {}
 
   @UseGuards(LocalAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('auth/login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Request() req): Promise<any> {
+    return await this.authService.login(req.user);
   }
 
   @Post('auth/signup')
