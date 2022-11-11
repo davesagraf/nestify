@@ -3,11 +3,11 @@ import 'reflect-metadata';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
-  host: 'localhost',
+  host: 'host.docker.internal',
   port: 5432,
-  username: 'dave',
-  password: 'mazomedik',
-  database: 'nestify_db',
+  username: 'postgres',
+  password: 'postgrespw',
+  database: 'postgres',
   synchronize: true,
   logging: false,
   entities: ['dist/src/**/*.entity.js'],
