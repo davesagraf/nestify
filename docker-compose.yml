@@ -29,8 +29,8 @@ services:
     image: davesagraf/nestify:nestify_front
     container_name: nestify-frontend
     build:
-      context: ../nestify-frontend
-      dockerfile: ../nestify-frontend/Dockerfile
+      context: https://github.com/davesagraf/nestify-frontend.git
+      dockerfile: Dockerfile
     ports:
       - 5173:5173
     links:
