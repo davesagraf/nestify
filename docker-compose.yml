@@ -1,0 +1,37 @@
+version: '3.4'
+
+volumes:
+  data:
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgrespw
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql
+
+  nestify:
+    image: davesagraf/nestify:nestify_back
+    container_name: nestify
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+    links:
+      - postgres  
+
+  nestify-frontend:
+    image: davesagraf/nestify:nestify_front
+    container_name: nestify-frontend
+    build:
+      context: ../nestify-frontend
+      dockerfile: ../nestify-frontend/Dockerfile
+    ports:
+      - 5173:5173
+    links:
+      - nestify     
