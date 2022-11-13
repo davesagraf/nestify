@@ -7,6 +7,8 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres
+    env_file:
+      - .env
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
@@ -17,9 +19,11 @@ services:
   nestify:
     image: davesagraf/nestify:nestify_back
     container_name: nestify
+    env_file:
+      - .env
     build: 
-      context: .
-      dockerfile: ./Dockerfile
+      context: https://github.com/davesagraf/nestify.git
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
     links:
